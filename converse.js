@@ -835,7 +835,9 @@
                 }, this);
                 this.updateVCard();
                 this.$el.appendTo(converse.chatboxesview.$el);
-                this.render().show().model.messages.fetch({add: true});
+                var chatbox = this.render().show();
+                Aniways.init();
+                chatbox.model.messages.fetch({add: true});
                 if (this.model.get('status')) {
                     this.showStatusMessage(this.model.get('status'));
                 }
