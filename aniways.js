@@ -7,9 +7,6 @@
   }
 
   function decodeMessage(message){
-    var div = document.createElement('div');
-    div.innerHTML = message;
-    message = div.firstChild.nodeValue;
     var msg_parts = message.split("\ufeff\ufeff\n\n");
     var msg = msg_parts[0];
     if (msg_parts.length <= 1)
@@ -34,6 +31,7 @@
   }
 
   function getJsonFromUrl(url) {
+    url = url.replace(/&amp;/g, '&')
     var query = url.split("?")[1];
     var data = query.split("&");
     var result = {};
