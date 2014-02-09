@@ -23,7 +23,7 @@
     var start = 0;
     for (var i = 0; i < count; i++) {
       html += msg.substring(start, parseInt(meta_data['si' + i]));
-      html += "<img style='height:40px' src='http://az493648.vo.msecnd.net/aniways-assets/android/ldpi/" + meta_data['id' + i] + "'  title=':" + msg.substring(parseInt(meta_data['si' + i]), parseInt(meta_data['si' + i]) + parseInt(meta_data['l' + i])) + ":'>";
+      html += "<img class='aniways-image' src='http://az493648.vo.msecnd.net/aniways-assets/android/ldpi/" + meta_data['id' + i] + "'  title=':" + msg.substring(parseInt(meta_data['si' + i]), parseInt(meta_data['si' + i]) + parseInt(meta_data['l' + i])) + ":'>";
       start = parseInt(meta_data['l' + i]) + parseInt(meta_data['si' + i]);
     }
     html += msg.substring(start);
