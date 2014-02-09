@@ -3,7 +3,7 @@ window.Aniways = (function () {
 
   var aniways = {
     init: function(){
-      if (document.getElementsByClassName('aniways-text').length > 0){
+      if (document.getElementsByClassName('aniways-wall').length > 0){
         addWallObserver();
       } else {
         console.log("Can't find element with aniways-wall class");
