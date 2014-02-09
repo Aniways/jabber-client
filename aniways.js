@@ -1,8 +1,10 @@
-(function () {
+(function() {
   document.onreadystatechange = function () {
     var state = document.readyState
       if (state == 'complete') {
-        addWallObserver()
+        if (document.getElementsByClassName('aniways-wall').length > 0){
+          addWallObserver();
+        }
       }
   }
 
