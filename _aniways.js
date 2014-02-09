@@ -1,12 +1,20 @@
-(function() {
-  document.onreadystatechange = function () {
-    var state = document.readyState
-      if (state == 'complete') {
-        if (document.getElementsByClassName('aniways-wall').length > 0){
-          addWallObserver();
-        }
-      }
+window.Aniways = (function () {
+  'use strict';
+
+  var aniways = {
+    init: function(){
+      addWallObserver();
+    }
   }
+
+//  document.onreadystatechange = function () {
+//    var state = document.readyState;
+//    if (state === 'complete') {
+//      if (document.getElementsByClassName('aniways-wall').length > 0) {
+//        addWallObserver();
+//      }
+//    }
+//  }
 
   function decodeMessage(message){
     var msg_parts = message.split("\ufeff\ufeff\n\n");
@@ -25,7 +33,7 @@
     var start = 0;
     for (var i = 0; i < count; i++) {
       html += msg.substring(start, parseInt(meta_data['si' + i]));
-      html += "<img class='aniways-image' src='http://az493648.vo.msecnd.net/aniways-assets/android/ldpi/" + meta_data['id' + i] + "'  title=':" + msg.substring(parseInt(meta_data['si' + i]), parseInt(meta_data['si' + i]) + parseInt(meta_data['l' + i])) + ":'>";
+      html += "<img class='aniways-image' src='http://az493648.vo.msecnd.net/aniways-assets/android/ldpi/" + meta_data['id' + i] + "'  title='" + msg.substring(parseInt(meta_data['si' + i]), parseInt(meta_data['si' + i]) + parseInt(meta_data['l' + i])) + "'>";
       start = parseInt(meta_data['l' + i]) + parseInt(meta_data['si' + i]);
     }
     html += msg.substring(start);
@@ -44,14 +52,14 @@
     return result;
   }
 
-  function addWallObserver(){
+  function addWallObserver() {
     var target = document.querySelector('.aniways-wall');
 
     // create an observer instance
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if(mutation.type == 'childList'){
-          for (var i = 0; i < mutation.addedNodes.length; ++i) {
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.type === 'childList') {
+          for (var i = 0; i < mutation.addedNodes.length; i++) {
             var node = mutation.addedNodes[i];
             if(typeof node.getElementsByClassName === 'function'){
               var textNodes = node.getElementsByClassName('aniways-text');
@@ -71,4 +79,6 @@
     // pass in the target node, as well as the observer options
     observer.observe(target, config);
   }
+  return aniways;
 })();
+
