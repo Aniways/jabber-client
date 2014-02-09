@@ -1,0 +1,13 @@
+{
+  "name": "crypto-js",
+  "homepage": "https://github.com/Jeff-Mott-OR/CryptoJS",
+  "version": "3.1.2",
+  "_release": "3.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "3.1.2",
+    "commit": "b00efd2bad75c5b10d564f6201d8f9ceb1128fea"
+  },
+  "_source": "git://github.com/Jeff-Mott-OR/CryptoJS.git",
+  "_target": "~3.1.2"
+}

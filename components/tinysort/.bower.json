@@ -1,0 +1,12 @@
+{
+  "name": "tinysort",
+  "homepage": "https://github.com/Sjeiti/TinySort",
+  "_release": "e4fb98b902",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "e4fb98b902f84545db928b6a58c7ca57b4c9312f"
+  },
+  "_source": "git://github.com/Sjeiti/TinySort.git",
+  "_target": "*"
+}
