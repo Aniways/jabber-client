@@ -354,7 +354,7 @@ span.spinner.hor_centered {
 #conversejs {
     z-index: 99; /*--Keeps the panel on top of all other elements--*/
     position: fixed;
-    bottom: 0; right: 0;
+    bottom: 25%; right: 50%;
     height: 332px;
     width: auto;
 }
