@@ -48,12 +48,16 @@
     // create an observer instance
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        for (var i = 0; i < mutation.addedNodes.length; ++i) {
-          var node = mutation.addedNodes[i];
-          var textNodes = node.getElementsByClassName('aniways-text');
-          if(textNodes.length > 0){
-            var decodedMessage = decodeMessage(textNodes[0].innerHTML);
-            textNodes[0].innerHTML = decodedMessage;
+        if(mutation.type == 'childList'){
+          for (var i = 0; i < mutation.addedNodes.length; ++i) {
+            var node = mutation.addedNodes[i];
+            if(typeof node.getElementsByClassName === 'function'){
+              var textNodes = node.getElementsByClassName('aniways-text');
+              if(textNodes.length > 0){
+                var decodedMessage = decodeMessage(textNodes[0].innerHTML);
+                textNodes[0].innerHTML = decodedMessage;
+              }
+            }
           }
         }
       });
