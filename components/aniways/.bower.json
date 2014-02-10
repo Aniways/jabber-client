@@ -1,14 +1,14 @@
 {
   "name": "aniways",
   "_cacheHeaders": {
-    "ETag": "\"52dbce861d583d8d6b2a68235a4bb1b6\"",
-    "Content-Length": "2554",
+    "ETag": "\"6fd9016ae3faba01d461dc01708344dc\"",
+    "Content-Length": "2970",
     "Content-Type": "text/plain; charset=utf-8",
     "Content-Disposition": "inline"
   },
-  "_release": "e-tag:52dbce861",
+  "_release": "e-tag:6fd9016ae",
   "main": "index.js",
-  "_source": "https://raw.github.com/Aniways/JS-SDK/master/aniways.js?token=2141074__eyJzY29wZSI6IlJhd0Jsb2I6QW5pd2F5cy9KUy1TREsvbWFzdGVyL2FuaXdheXMuanMiLCJleHBpcmVzIjoxMzkyNTYxMTM5fQ%3D%3D--2956a935e48ecef250e3a21fbdc8bbf2fbffe582",
+  "_source": "https://raw.github.com/Aniways/JS-SDK/master/src/aniways.js?token=2141074__eyJzY29wZSI6IlJhd0Jsb2I6QW5pd2F5cy9KUy1TREsvbWFzdGVyL3NyYy9hbml3YXlzLmpzIiwiZXhwaXJlcyI6MTM5MjYzODczMX0%3D--a3c15ec9f8850ff237e889e6a655b0deda5989b4",
   "_target": "*",
-  "_originalSource": "https://raw.github.com/Aniways/JS-SDK/master/aniways.js?token=2141074__eyJzY29wZSI6IlJhd0Jsb2I6QW5pd2F5cy9KUy1TREsvbWFzdGVyL2FuaXdheXMuanMiLCJleHBpcmVzIjoxMzkyNTYxMTM5fQ%3D%3D--2956a935e48ecef250e3a21fbdc8bbf2fbffe582"
+  "_originalSource": "https://raw.github.com/Aniways/JS-SDK/master/src/aniways.js?token=2141074__eyJzY29wZSI6IlJhd0Jsb2I6QW5pd2F5cy9KUy1TREsvbWFzdGVyL3NyYy9hbml3YXlzLmpzIiwiZXhwaXJlcyI6MTM5MjYzODczMX0%3D--a3c15ec9f8850ff237e889e6a655b0deda5989b4"
 }
