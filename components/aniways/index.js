@@ -1,6 +1,4 @@
-window.Aniways = (function () {
-  'use strict';
-
+window.Aniways = (function () { 'use strict';
   var aniways = {
     init: function(){
       if (document.getElementsByClassName('aniways-wall').length > 0){
@@ -9,13 +7,105 @@ window.Aniways = (function () {
         console.log("Can't find element with aniways-wall class");
       }
     },
-    decodeMessage: function(message){
-      return decodeMessage(message);
+    decodeMessage: decodeMessage,
+    getJsonFromUrl: getJsonFromUrl,
+    unicodeToDecimal: unicodeToDecimal,
+    extractEncodingData: extractEncodingData,
+    unicodeMapping: {
+      "\u200B": 0,
+      "\u200C": 1,
+      "\u200D": 2,
+      "\ufeff": 3
     },
-    getJsonFromUrl: getJsonFromUrl
+    Delimiter: 8203
   };
 
+  function unicodeToDecimal(unicodeString){
+    var base4Integer = "";
+    var radix = 4;
+    for (var i = 0;  i < unicodeString.length; i++) {
+      var mappedUnicode = this.unicodeMapping[unicodeString.charAt(i)];
+      if(mappedUnicode == undefined){ return -1; }
+      base4Integer += this.unicodeMapping[unicodeString.charAt(i)];
+    }
+    return parseInt(base4Integer, radix);
+  }
+
+  function extractEncodingData(message){
+    var messageEncodingData = {data:[], message:""};
+    var encodingData = {};
+    var messageLength = message.length;
+    for (var messageIndex = 0; messageIndex < messageLength; messageIndex++) {
+        if (message.charCodeAt( messageIndex ) > 255) {
+          encodingData = {};
+          encodingData["phraseStart"] = messageIndex;
+          message = removeAndRecordImageID(encodingData, message, messageIndex);
+          message = removeAndRecordDelimiter(encodingData, "subPhraseStart", message, messageIndex);
+          message = removeAndRecordDelimiter(encodingData, "subPhraseEnd", message, messageIndex);
+          message = removeAndRecordDelimiter(encodingData, "phraseEnd", message, messageIndex);
+          messageEncodingData.data.push(encodingData);
+          messageIndex = encodingData["phraseEnd"];
+          messageLength = messageLength - 16;
+        }
+    }
+    messageEncodingData["message"] = message;
+
+    return messageEncodingData;
+
+  }
+
+  function removeAndRecordImageID(encodingData, message, messageIndex){
+    var unicodeString = message.substr(messageIndex, 13);
+    encodingData["imageId"] = Aniways.unicodeToDecimal(unicodeString);
+    if(encodingData["imageId"] === -1){
+      throw new EncodingException("Mallformed image encoding");
+    }
+    return message.substr(0, messageIndex) + message.substr(messageIndex + 13);
+  }
+
+  function removeAndRecordDelimiter(encodingData, section, message, messageIndex){
+    encodingData[section] = message.indexOf(String.fromCharCode(Aniways.Delimiter), messageIndex);
+    if(encodingData[section] === -1){
+      throw new EncodingException("Can't find" + section + " delimiter");
+    }
+    return message.substr(0, encodingData[section]) + message.substr(encodingData[section] + 1);
+  }
+
+  function EncodingException(message) {
+   this.message = message;
+   this.type = "EncodingException";
+  }
+
   function decodeMessage(message){
+    try {
+      return unicodeDecoding(message);
+    }catch(e){
+      if(e.type === "EncodingException"){
+        return urlDecoding(message);
+      }
+    }
+  }
+
+  function unicodeDecoding(message){
+    var messageEncodingData = extractEncodingData(message);
+    var strippedMessage = messageEncodingData["message"];
+    var html = "";
+    var start = 0;
+    for (var i=0; i<messageEncodingData.data.length; i++ ) {
+      var encodingData = messageEncodingData.data[i];
+      html += strippedMessage.substring(start, encodingData["subPhraseStart"]);
+      html += "<img class='aniways-image' src='http://az493648.vo.msecnd.net/aniways-assets/android/ldpi/" +
+        encodingData['imageId'] + "'  title='" +
+        strippedMessage.substring(
+          encodingData["subPhraseStart"], encodingData["subPhraseEnd"]) +
+          "'>";
+      start = encodingData['subPhraseEnd']
+    }
+    html += strippedMessage.substring(start);
+    return html;
+
+  }
+  function urlDecoding(message){
     var messageParts = message.split("\ufeff\ufeff\n\n");
     var originalMessage = messageParts[0];
     if (messageParts.length <= 1){
