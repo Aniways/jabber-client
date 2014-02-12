@@ -1,12 +1,12 @@
 {
   "name": "aniways",
   "_cacheHeaders": {
-    "ETag": "\"4fddc964aa5e6a6b1b26fbde530404d9\"",
+    "ETag": "\"0f603ca863dc6251a77f6f007aaa267e\"",
     "Content-Length": "6881",
     "Content-Type": "text/plain; charset=utf-8",
     "Content-Disposition": "inline"
   },
-  "_release": "e-tag:4fddc964a",
+  "_release": "e-tag:0f603ca86",
   "main": "index.js",
   "_source": "https://raw.github.com/Aniways/JS-SDK/master/src/aniways.js?token=2141074__eyJzY29wZSI6IlJhd0Jsb2I6QW5pd2F5cy9KUy1TREsvbWFzdGVyL3NyYy9hbml3YXlzLmpzIiwiZXhwaXJlcyI6MTM5MjYzODczMX0%3D--a3c15ec9f8850ff237e889e6a655b0deda5989b4",
   "_target": "*",

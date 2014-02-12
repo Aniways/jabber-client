@@ -18,10 +18,10 @@ window.Aniways = (function () { 'use strict';
       "\ufeff": 3
     },
     lengthMapping: {
-      "\u200B": 6,
-      "\u200C": 12,
-      "\u200D": 18,
-      "\ufeff": 24
+      "\u200B": 5,
+      "\u200C": 11,
+      "\u200D": 17,
+      "\ufeff": 23
     },
     Delimiter: 8203
   };
