@@ -1,128 +1,121 @@
-window.Aniways = (function () { 'use strict';
-  var aniways = {
-    init: function(){
-      if (document.getElementsByClassName('aniways-wall').length > 0){
-        addWallObserver();
-      } else {
-        console.log("Can't find element with aniways-wall class");
-      }
-    },
-    decodeMessage: decodeMessage,
-    getJsonFromUrl: getJsonFromUrl,
-    unicodeToDecimal: unicodeToDecimal,
-    extractEncodingData: extractEncodingData,
-    unicodeMapping: {
-      "\u200B": 0,
-      "\u200C": 1,
-      "\u200D": 2,
-      "\ufeff": 3
-    },
-    lengthMapping: {
-      "\u200B": 5,
-      "\u200C": 11,
-      "\u200D": 17,
-      "\ufeff": 23
-    },
-    Delimiter: 8203
-  };
+window.Aniways = {
+  init: function(){
+    if (document.getElementsByClassName('aniways-wall').length > 0){
+      this.addWallObserver();
+    } else {
+      console.log("Can't find element with aniways-wall class");
+    }
+  },
+  unicodeMapping: {
+    "\u200B": 0,
+    "\u200C": 1,
+    "\u200D": 2,
+    "\ufeff": 3
+  },
+  lengthMapping: {
+    "\u200B": 5,
+    "\u200C": 11,
+    "\u200D": 17,
+    "\ufeff": 23
+  },
+  Delimiter: 8203,
+  httpRequest: new XMLHttpRequest(),
 
-  function unicodeToDecimal(unicodeString){
+  unicodeToDecimal: function (unicodeString){
     var base4Integer = "";
     var radix = 4;
     for (var i = 0;  i < unicodeString.length; i++) {
       var mappedUnicode = this.unicodeMapping[unicodeString.charAt(i)];
-      if(mappedUnicode == undefined){ return -1; }
-      base4Integer += this.unicodeMapping[unicodeString.charAt(i)];
+      if(mappedUnicode === undefined){ return -1; }
+      base4Integer = base4Integer + this.unicodeMapping[unicodeString.charAt(i)];
     }
     return parseInt(base4Integer, radix);
-  }
+  },
 
-  function extractEncodingData(message){
+  extractEncodingData: function(message){
     var messageEncodingData = {data:[], message:""};
     var encodingData = {};
     var messageLength = message.length;
     for (var messageIndex = 0; messageIndex < messageLength; messageIndex++) {
-        if (message.charCodeAt( messageIndex ) > 255) {
-          encodingData = {};
-          encodingData["phraseStart"] = messageIndex;
-          message = removeAndRecordImageID(encodingData, message, messageIndex);
-          message = removeAndRecordDelimiter(encodingData, "subPhraseStart", message, messageIndex);
-          message = removeAndRecordDelimiter(encodingData, "subPhraseEnd", message, messageIndex);
-          message = removeAndRecordDelimiter(encodingData, "phraseEnd", message, messageIndex);
-          messageEncodingData.data.push(encodingData);
-          messageIndex = encodingData["phraseEnd"];
-          messageLength = message.length;
-        }
+      if (message.charCodeAt( messageIndex ) > 255) {
+        encodingData = {};
+        encodingData.phraseStart = messageIndex;
+        message = this.removeAndRecordImageID(encodingData, message, messageIndex);
+        message = this.removeAndRecordDelimiter(encodingData, "subPhraseStart", message, messageIndex);
+        message = this.removeAndRecordDelimiter(encodingData, "subPhraseEnd", message, messageIndex);
+        message = this.removeAndRecordDelimiter(encodingData, "phraseEnd", message, messageIndex);
+        messageEncodingData.data.push(encodingData);
+        messageIndex = encodingData.phraseEnd;
+        messageLength = message.length;
+      }
     }
-    messageEncodingData["message"] = message;
+    messageEncodingData.message = message;
 
     return messageEncodingData;
 
-  }
+  },
 
-  function removeAndRecordImageID(encodingData, message, messageIndex){
-    var imageEncodingLength = Aniways.lengthMapping[message.charAt(messageIndex)];
+  removeAndRecordImageID: function(encodingData, message, messageIndex){
+    var imageEncodingLength = this.lengthMapping[message.charAt(messageIndex)];
     var unicodeString = message.substr(messageIndex + 1, imageEncodingLength);
-    encodingData["imageId"] = Aniways.unicodeToDecimal(unicodeString);
-    if(encodingData["imageId"] === -1){
-      throw new EncodingException("Mallformed image encoding");
+    encodingData.imageId = this.unicodeToDecimal(unicodeString);
+    if(encodingData.imageId === -1){
+      throw new AniwaysEncodingError("Mallformed image encoding");
     }
     if(message.charCodeAt(messageIndex + imageEncodingLength + 1) > 255 &&
-      message.charCodeAt(messageIndex + imageEncodingLength + 1) !== Aniways.Delimiter ) {
-      throw new EncodingException("Mallformed image encoding");
+      message.charCodeAt(messageIndex + imageEncodingLength + 1) !== this.Delimiter ) {
+      throw new AniwaysEncodingError("Mallformed image encoding");
     }
     return message.substr(0, messageIndex) + message.substr(messageIndex + imageEncodingLength + 1);
-  }
+  },
 
-  function removeAndRecordDelimiter(encodingData, section, message, messageIndex){
-    encodingData[section] = message.indexOf(String.fromCharCode(Aniways.Delimiter), messageIndex);
+  removeAndRecordDelimiter: function(encodingData, section, message, messageIndex){
+    encodingData[section] = message.indexOf(String.fromCharCode(this.Delimiter), messageIndex);
     if(encodingData[section] === -1){
-      throw new EncodingException("Can't find" + section + " delimiter");
+      throw new AniwaysEncodingError("Can't find " + section + " delimiter");
     }
     return message.substr(0, encodingData[section]) + message.substr(encodingData[section] + 1);
-  }
+  },
 
-  function EncodingException(message) {
-   this.message = message;
-   this.type = "EncodingException";
-  }
 
-  function decodeMessage(message){
+  decodeMessage: function(message){
     try {
-      return unicodeDecoding(message);
+      return this.unicodeDecoding(message);
     }catch(e){
-      if(e.type === "EncodingException"){
-        return urlDecoding(message);
+      if(e instanceof AniwaysEncodingError ){
+        return this.urlDecoding(message);
       }
     }
-  }
+  },
 
-  function unicodeDecoding(message){
-    var messageEncodingData = extractEncodingData(message);
-    var strippedMessage = messageEncodingData["message"];
+  unicodeDecoding: function(message){
+    var messageEncodingData = this.extractEncodingData(message);
+    var strippedMessage = messageEncodingData.message;
+    var assetMapping = this.getAniwaysMapping();
     var html = "";
     var start = 0;
     for (var i=0; i<messageEncodingData.data.length; i++ ) {
       var encodingData = messageEncodingData.data[i];
-      html += strippedMessage.substring(start, encodingData["subPhraseStart"]);
+      html += strippedMessage.substring(start, encodingData.subPhraseStart);
       html += "<img class='aniways-image' src='http://az493648.vo.msecnd.net/aniways-assets/android/ldpi/" +
-        encodingData['imageId'] + "'  title='" +
+        encodingData.imageId + "'  title='" +
         strippedMessage.substring(
-          encodingData["subPhraseStart"], encodingData["subPhraseEnd"]) +
-          "'>";
-      start = encodingData['subPhraseEnd']
+          encodingData.subPhraseStart, encodingData.subPhraseEnd) +
+        "'>";
+      start = encodingData.subPhraseEnd;
     }
     html += strippedMessage.substring(start);
     return html;
 
-  }
-  function urlDecoding(message){
+  },
+
+  urlDecoding: function(message){
     var messageParts = message.split("\ufeff\ufeff\n\n");
     var originalMessage = messageParts[0];
     if (messageParts.length <= 1){
       return originalMessage;
     }
-    var encodingData = getJsonFromUrl(messageParts[1]);
+    var encodingData = this.getJsonFromUrl(messageParts[1]);
     var count = 0;
     for (var data in encodingData) {
       if (encodingData.hasOwnProperty(data)) {
@@ -140,9 +133,9 @@ window.Aniways = (function () { 'use strict';
     }
     html += originalMessage.substring(start);
     return html;
-  }
+  },
 
-  function getJsonFromUrl(url) {
+  getJsonFromUrl: function(url) {
     url = url.replace(/&amp;/g, '&');
     url = url.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/ );
     var query = url[0].split("?")[1];
@@ -153,9 +146,9 @@ window.Aniways = (function () { 'use strict';
       result[item[0]] = item[1];
     }
     return result;
-  }
+  },
 
-  function addWallObserver() {
+  addWallObserver: function() {
     var target = document.querySelector('.aniways-wall');
 
     // create an observer instance
@@ -168,7 +161,7 @@ window.Aniways = (function () { 'use strict';
             if(typeof node.getElementsByClassName === 'function'){
               var message = node.getElementsByClassName('aniways-text');
               if(message.length > 0){
-                var decodedMessage = decodeMessage(message[0].innerHTML);
+                var decodedMessage = Aniways.decodeMessage(message[0].innerHTML);
                 message[0].innerHTML = decodedMessage;
               }
             }
@@ -182,7 +175,31 @@ window.Aniways = (function () { 'use strict';
 
     // pass in the target node, as well as the observer options
     observer.observe(target, config);
+  },
+
+  getAniwaysMapping: function(){
+    this.httpRequest.onreadystatechange = this.setMapping;
+    this.httpRequest.open('GET', "http://apitest.aniways.com/v2/keywords", true);
+    this.httpRequest.send();
+
+  },
+
+  setMapping: function(){
+    if (this.readyState === 4) {
+      if (this.status === 200) {
+        var mapping = JSON.parse(this.responseText);
+        var i = 0;
+      } else {
+        console.error('There was a problem with the keywords request.');
+      }
+    }
   }
-  return aniways;
-})();
+
+};
+
+function AniwaysEncodingError(message) {
+  this.message = message;
+}
+AniwaysEncodingError.prototype = new Error();
+AniwaysEncodingError.prototype.constructor = AniwaysEncodingError;
 
