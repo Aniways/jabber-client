@@ -17,6 +17,12 @@ window.Aniways = (function () { 'use strict';
       "\u200D": 2,
       "\ufeff": 3
     },
+    lengthMapping: {
+      "\u200B": 6,
+      "\u200C": 12,
+      "\u200D": 18,
+      "\ufeff": 24
+    },
     Delimiter: 8203
   };
 
@@ -45,7 +51,7 @@ window.Aniways = (function () { 'use strict';
           message = removeAndRecordDelimiter(encodingData, "phraseEnd", message, messageIndex);
           messageEncodingData.data.push(encodingData);
           messageIndex = encodingData["phraseEnd"];
-          messageLength = messageLength - 16;
+          messageLength = message.length;
         }
     }
     messageEncodingData["message"] = message;
@@ -55,12 +61,17 @@ window.Aniways = (function () { 'use strict';
   }
 
   function removeAndRecordImageID(encodingData, message, messageIndex){
-    var unicodeString = message.substr(messageIndex, 13);
+    var imageEncodingLength = Aniways.lengthMapping[message.charAt(messageIndex)];
+    var unicodeString = message.substr(messageIndex + 1, imageEncodingLength);
     encodingData["imageId"] = Aniways.unicodeToDecimal(unicodeString);
     if(encodingData["imageId"] === -1){
       throw new EncodingException("Mallformed image encoding");
     }
-    return message.substr(0, messageIndex) + message.substr(messageIndex + 13);
+    if(message.charCodeAt(messageIndex + imageEncodingLength + 1) > 255 &&
+      message.charCodeAt(messageIndex + imageEncodingLength + 1) !== Aniways.Delimiter ) {
+      throw new EncodingException("Mallformed image encoding");
+    }
+    return message.substr(0, messageIndex) + message.substr(messageIndex + imageEncodingLength + 1);
   }
 
   function removeAndRecordDelimiter(encodingData, section, message, messageIndex){
