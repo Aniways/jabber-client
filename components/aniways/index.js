@@ -19,7 +19,10 @@ window.Aniways = {
     "\ufeff": 23
   },
   Delimiter: 8203,
-  httpRequest: new XMLHttpRequest(),
+  assetsIdsToNames: {},
+  assetsNamesToUrls: {},
+  keywordsPath: "http://api.aniways.com/v2/keywords",
+  assetsPath: "http://api.aniways.com/v2/assets",
 
   unicodeToDecimal: function (unicodeString){
     var base4Integer = "";
@@ -91,18 +94,24 @@ window.Aniways = {
   unicodeDecoding: function(message){
     var messageEncodingData = this.extractEncodingData(message);
     var strippedMessage = messageEncodingData.message;
-    var assetMapping = this.getAniwaysMapping();
     var html = "";
     var start = 0;
     for (var i=0; i<messageEncodingData.data.length; i++ ) {
       var encodingData = messageEncodingData.data[i];
-      html += strippedMessage.substring(start, encodingData.subPhraseStart);
-      html += "<img class='aniways-image' src='http://az493648.vo.msecnd.net/aniways-assets/android/ldpi/" +
-        encodingData.imageId + "'  title='" +
-        strippedMessage.substring(
-          encodingData.subPhraseStart, encodingData.subPhraseEnd) +
-        "'>";
-      start = encodingData.subPhraseEnd;
+      var imagePath = this.assetsNamesToUrls[this.assetsIdsToNames[encodingData.imageId]];
+      if(imagePath === undefined){
+        html += strippedMessage.substring(start, encodingData.phraseEnd);
+        start = encodingData.phraseEnd;
+
+      }else{
+        imagePath = imagePath.substring(0, imagePath.indexOf("::"));
+        html += strippedMessage.substring(start, encodingData.subPhraseStart);
+        html += "<img class='aniways-image' src='" + imagePath + "'  title='" +
+          strippedMessage.substring(
+            encodingData.subPhraseStart, encodingData.subPhraseEnd) +
+          "'>";
+        start = encodingData.subPhraseEnd;
+      }
     }
     html += strippedMessage.substring(start);
     return html;
@@ -177,20 +186,24 @@ window.Aniways = {
     observer.observe(target, config);
   },
 
-  getAniwaysMapping: function(){
-    this.httpRequest.onreadystatechange = this.setMapping;
-    this.httpRequest.open('GET', "http://apitest.aniways.com/v2/keywords", true);
-    this.httpRequest.send();
-
-  },
-
-  setMapping: function(){
+  setMapping:function(){
     if (this.readyState === 4) {
       if (this.status === 200) {
-        var mapping = JSON.parse(this.responseText);
-        var i = 0;
+        localStorage.setItem('assetsIdsToNames', this.responseText);
+        Aniways.assetsIdsToNames = JSON.parse(this.responseText).iconIdsToNames;
       } else {
         console.error('There was a problem with the keywords request.');
+      }
+    }
+  },
+
+  setAssets:function(){
+    if (this.readyState === 4) {
+      if (this.status === 200) {
+        localStorage.setItem('assetsNamesToUrls', this.responseText);
+        Aniways.assetsNamesToUrls = JSON.parse(this.responseText).assets;
+      } else {
+        console.error('There was a problem with the assets request.');
       }
     }
   }
@@ -203,3 +216,24 @@ function AniwaysEncodingError(message) {
 AniwaysEncodingError.prototype = new Error();
 AniwaysEncodingError.prototype.constructor = AniwaysEncodingError;
 
+(function(){
+  var idsToNames = localStorage.getItem('assetsIdsToNames');
+  if(idsToNames === null){
+    var mappingHttpRequest =  new XMLHttpRequest();
+    mappingHttpRequest.onreadystatechange = Aniways.setMapping;
+    mappingHttpRequest.open('GET', Aniways.keywordsPath, true);
+    mappingHttpRequest.send();
+  }else{
+    Aniways.assetsIdsToNames = JSON.parse(idsToNames).iconIdsToNames;
+  }
+  var assetsNamesToUrls = localStorage.getItem('assetsNamesToUrls');
+  if(assetsNamesToUrls === null){
+    var assetsHttpRequest =  new XMLHttpRequest();
+    assetsHttpRequest.onreadystatechange = Aniways.setAssets;
+    assetsHttpRequest.open('GET', Aniways.assetsPath, true);
+    assetsHttpRequest.send();
+  } else{
+    Aniways.assetsNamesToUrls = JSON.parse(assetsNamesToUrls).assets;
+  }
+
+})();
