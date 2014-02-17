@@ -805,7 +805,7 @@
             message_template: _.template(
                 '<div class="chat-message {{extra_classes}}">' +
                     '<span class="chat-message-{{sender}}">{{time}} {{username}}:&nbsp;</span>' +
-                    '<span class="chat-message-content aniways-text">{{message}}</span>' +
+                    '<span class="chat-message-content aniways-message">{{message}}</span>' +
                 '</div>'),
 
             action_template: _.template(
