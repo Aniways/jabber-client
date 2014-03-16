@@ -1,13 +1,14 @@
 {
   "name": "Aniways",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "homepage": "www.aniways.com",
   "authors": [
     "Daniel Kalman <daniel@aniways.com>"
   ],
   "description": "Enrich web chat applications",
   "main": [
-    "aniways.min.js"
+    "aniways.min.js",
+    "aniways.css"
   ],
   "keywords": [
     "chat",
@@ -20,13 +21,13 @@
   "ignore": [
     "src"
   ],
-  "_release": "0.1.2",
+  "_release": "0.2.0",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.2",
-    "commit": "ce12830e5f8bc2ea77a69a01b30feab8d8cfff5a"
+    "tag": "v0.2.0",
+    "commit": "c3ddc1078982cdf2b561930af756f1a453a59084"
   },
   "_source": "git://github.com/Aniways/web-SDK.git",
-  "_target": "~0.1.0",
+  "_target": "0.2.0",
   "_originalSource": "aniways"
 }
