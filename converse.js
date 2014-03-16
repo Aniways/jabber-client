@@ -719,7 +719,7 @@
 
             events: {
                 'click .close-chatbox-button': 'closeChat',
-                'keypress textarea.chat-textarea': 'keyPressed',
+                'keypress div.chat-textarea': 'keyPressed',
                 'click .toggle-smiley': 'toggleEmoticonMenu',
                 'click .toggle-smiley ul li': 'insertEmoticon',
                 'click .toggle-otr': 'toggleOTRMenu',
@@ -741,9 +741,9 @@
                     '{[ if ('+converse.show_toolbar+') { ]}' +
                         '<ul class="chat-toolbar no-text-select"></ul>'+
                     '{[ } ]}' +
-                '<textarea ' +
+                '<div contenteditable=true ' +
                     'type="text" ' +
-                    'class="chat-textarea" ' +
+                    'class="chat-textarea aniways-div" ' +
                     'placeholder="'+__('Personal message')+'"/>'+
                 '</form>'
             ),
@@ -836,7 +836,7 @@
                 this.updateVCard();
                 this.$el.appendTo(converse.chatboxesview.$el);
                 var chatbox = this.render().show();
-                Aniways.init();
+                Aniways.init('converse');
                 chatbox.model.messages.fetch({add: true});
                 if (this.model.get('status')) {
                     this.showStatusMessage(this.model.get('status'));
@@ -1050,7 +1050,7 @@
                     message, notify, composing;
                 if(ev.keyCode == KEY.ENTER) {
                     ev.preventDefault();
-                    message = $textarea.val();
+                    message = Aniways.encodeText($textarea);
                     $textarea.val('').focus();
                     if (message !== '') {
                         if (this.model.get('chatroom')) {
@@ -1080,7 +1080,7 @@
             insertEmoticon: function (ev) {
                 ev.stopPropagation();
                 this.$el.find('.toggle-smiley ul').slideToggle(200);
-                var $textbox = this.$el.find('textarea.chat-textarea');
+                var $textbox = this.$el.find('div.chat-textarea');
                 var value = $textbox.val();
                 var $target = $(ev.target);
                 $target = $target.is('a') ? $target : $target.children('a');
@@ -1815,7 +1815,7 @@
                 'click a.configure-chatroom-button': 'configureChatRoom',
                 'click .toggle-smiley': 'toggleEmoticonMenu',
                 'click .toggle-smiley ul li': 'insertEmoticon',
-                'keypress textarea.chat-textarea': 'keyPressed'
+                'keypress div.chat-textarea': 'keyPressed'
             },
             info_template: _.template('<div class="chat-info">{{message}}</div>'),
             is_chatroom: true,
@@ -1881,7 +1881,7 @@
                         '{[ if ('+converse.show_toolbar+') { ]}' +
                             '<ul class="chat-toolbar no-text-select"></ul>'+
                         '{[ } ]}' +
-                        '<textarea type="text" class="chat-textarea" ' +
+                        '<div contenteditable type="text" class="chat-textarea aniways-div" ' +
                             'placeholder="'+__('Message')+'"/>' +
                     '</form>' +
                 '</div>' +
