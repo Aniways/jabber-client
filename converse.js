@@ -836,7 +836,7 @@
                 this.updateVCard();
                 this.$el.appendTo(converse.chatboxesview.$el);
                 var chatbox = this.render().show();
-                Aniways.init('converse');
+                Aniways.init('converse', {inputImageSize: 35, wallImageSize: 40});
                 chatbox.model.messages.fetch({add: true});
                 if (this.model.get('status')) {
                     this.showStatusMessage(this.model.get('status'));
