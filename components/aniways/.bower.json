@@ -1,6 +1,6 @@
 {
   "name": "Aniways",
-  "version": "0.2.1",
+  "version": "0.2.5",
   "homepage": "www.aniways.com",
   "authors": [
     "Daniel Kalman <daniel@aniways.com>"
@@ -19,15 +19,16 @@
   "license": "GPLv3+",
   "private": false,
   "ignore": [
-    "src"
+    "src",
+    "README.md"
   ],
-  "_release": "0.2.1",
+  "_release": "0.2.5",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.1",
-    "commit": "2fb3d9eb1c0323a12e8e90257dc9e01b146eb11a"
+    "tag": "v0.2.5",
+    "commit": "c45f51d91c26969c3d66ecab4be3a8b9dfd6f1e8"
   },
   "_source": "git://github.com/Aniways/web-SDK.git",
-  "_target": "0.2.1",
+  "_target": "~0.2.4",
   "_originalSource": "aniways"
 }

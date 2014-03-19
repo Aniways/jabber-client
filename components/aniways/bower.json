@@ -1,6 +1,6 @@
 {
   "name": "Aniways",
-  "version": "0.2.1",
+  "version": "0.2.5",
   "homepage": "www.aniways.com",
   "authors": [
     "Daniel Kalman <daniel@aniways.com>"
@@ -16,6 +16,7 @@
   "license": "GPLv3+",
   "private": false,
   "ignore": [
-    "src"
+    "src",
+    "README.md"
   ]
 }
