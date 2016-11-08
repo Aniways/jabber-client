@@ -108,6 +108,6 @@ Donate
 .. _`In a static HTML page`: http://opkode.com/media/blog/2013/04/02/converse.js-xmpp-instant-messaging-with-javascript
 .. _`conversejs.org`: http://conversejs.org
 .. _jquery: http://jquery.com
-.. _jasmine.js: http://pivotal.github.io/jasmine
+.. _jasmine.js: https://jasmine.github.io/
 .. _phantom.js: http://phantomjs.org
 .. _`Travis-CI`: https://travis-ci.org
